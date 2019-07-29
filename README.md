@@ -1,0 +1,1 @@
+# The game snake (supports cookies for remembering best game score)
