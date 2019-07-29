@@ -1,1 +1,2 @@
-# The game snake (supports cookies for remembering best game score)
+# Snake
+The game remembers the best score in cookies
