@@ -396,17 +396,15 @@ window.addEventListener("load", function() {
 	document.addEventListener("touchstart", touch, false);}, false);
 
 function touch(event) {
-    var touchPositionX = event.touches[0].pageX;
-    var touchPositionY = event.touches[0].pageY;
-    
-    if (touchPositionY < document.documentElement.clientHeight / 3) 
-    	goUp();
-    else
-    	if (touchPositionY > 2 * document.documentElement.clientHeight / 3) 
-    		goDown();
+    if (direction == RIGHT || direction == LEFT) {
+    	if (event.touches[0].screenY < snake[0].y * side)
+    		goUp();
     	else
-    		if (touchPositionX < document.documentElement.clientHeight / 3)
-    			goLeft();
-    		else
-    			goRight();	
+    		goDown();
+    } else {
+    	if (event.touches[0].screenX < snake[0].x * side)
+    		goLeft();
+    	else
+    		goRight();
+    }
 }
