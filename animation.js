@@ -168,7 +168,6 @@ function drawFace() {
 
 function start() {
 	if (startReset) {
-		document.body.style.overflow = "hidden"; // scrolling off
 		button.textContent = "Reset";
 		setFood();
 		timer = setInterval("animation();", 150); // delay = 150 milliseconds
@@ -289,7 +288,7 @@ function makeNextMove() {
 	}
 }
 
-//true = crash
+// crash = true
 function crash() {
 	// collision with border
 	if (snake[0].x < 0 || snake[0].y < 0 || snake[0].x > 24 || snake[0].y > 24)
@@ -302,7 +301,7 @@ function crash() {
 	return false;
 }
 
-//redraw snake[0] (face), snake[1], snake[snake.length - 1]
+// redraw snake[0] (face), snake[1], snake[snake.length - 1]
 function redrawSnake() {
 	drawFace();
 
@@ -320,7 +319,6 @@ function redrawSnake() {
 }
 
 function gameOver(mode) {
-	document.body.style.overflow = ""; // scrolling on
 	clearInterval(timer); // stop timer
 	setBestScoreToCookie();
 	
@@ -393,33 +391,22 @@ document.onkeydown = function(e) {
     }
 };
 
-// management of snake by swipes (touch screen)
+// management of snake by touch screen
 window.addEventListener("load", function() {
-	document.body.addEventListener("touchstart", rememberTouch, false);
-	document.body.addEventListener("touchmove", trackMovement, false);}, false);
+	document.addEventListener("touchstart", touch, false);}, false);
 
-var touchPositionX;
-var touchPositionY;
-function rememberTouch(event) {
-    touchPositionX = event.touches[0].pageX;
-    touchPositionY = event.touches[0].pageY;
-}
-
-function trackMovement(event) {
-    var moveX = touchPositionX - event.touches[0].pageX;
-    var moveY = touchPositionY - event.touches[0].pageY;
+function touch(event) {
+    var touchPositionX = event.touches[0].pageX;
+    var touchPositionY = event.touches[0].pageY;
     
-    if (Math.abs(moveX) > 50) {
-    	if (moveX < 0)
-        	goRight();
+    if (touchPositionY < document.documentElement.clientHeight / 3) 
+    	goUp();
+    else
+    	if (touchPositionY > 2 * document.documentElement.clientHeight / 3) 
+    		goDown();
     	else
-        	goLeft();
-    }
-    
-	if (Math.abs(moveY) > 50) {
-		if (moveY < 0)
-        	goDown();
-    	else
-        	goUp();
-    }
+    		if (touchPositionX < document.documentElement.clientHeight / 3)
+    			goLeft();
+    		else
+    			goRight();	
 }

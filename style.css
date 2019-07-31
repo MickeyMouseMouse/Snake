@@ -8,8 +8,7 @@
 }
 #startReset {
 	font-size: 18px;
-	margin-left: 0px;
-	width: 80px;
+	width: 100px;
 }
 #currentScore {
 	font-size: 22;
@@ -17,8 +16,12 @@
 	border: solid 0px;
 	margin-left: 60px;
 }
-#ending {
-	font-size: 18px;
-	margin-left: 110px;
-	margin-top: -10px;
+#info {
+	font-size: 20;
+	text-align: center;
+	border: solid 0px;
+	width: 480px;
+}
+#link {
+	font-size: 20;
 }
