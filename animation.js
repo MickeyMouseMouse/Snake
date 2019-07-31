@@ -397,12 +397,12 @@ window.addEventListener("load", function() {
 
 function touch(event) {
     if (direction == RIGHT || direction == LEFT) {
-    	if (event.touches[0].screenY < snake[0].y * side)
+    	if (event.touches[0].pageY < snake[0].y * side)
     		goUp();
     	else
     		goDown();
     } else {
-    	if (event.touches[0].screenX < snake[0].x * side)
+    	if (event.touches[0].pageX < snake[0].x * side)
     		goLeft();
     	else
     		goRight();
