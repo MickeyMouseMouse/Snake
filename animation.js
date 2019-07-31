@@ -33,7 +33,7 @@ const BORDER_COLOR = "Black";
 
 var bestScore = document.getElementById("bestScore");
 var button = document.getElementById("startReset");
-var curentScore = document.getElementById("curentScore");
+var currentScore = document.getElementById("currentScore");
 var context = document.getElementById("field").getContext("2d");
 var timer;
 
@@ -78,7 +78,7 @@ function setCookie(name, value, options) {
 }
 
 function reset() {
-	var scoreFromCookie = getCookie("score") ;
+	var scoreFromCookie = getCookie("bestScore") ;
 	if (typeof scoreFromCookie == "string")
 		bestScore.value = "Best: " + scoreFromCookie;
 
@@ -104,7 +104,7 @@ function reset() {
 	score = 0;
 	
 	drawSnake();
-	curentScore.value = score;
+	currentScore.value = score;
 }
 
 function drawSnake() {
@@ -168,6 +168,7 @@ function drawFace() {
 
 function start() {
 	if (startReset) {
+		document.body.style.overflow = "hidden"; // scrolling off
 		button.textContent = "Reset";
 		setFood();
 		timer = setInterval("animation();", 150); // delay = 150 milliseconds
@@ -211,7 +212,7 @@ function setFood() {
 
 function setBestScoreToCookie() {
 	var bestScoreInt = Number(bestScore.value.split(" ")[1]) || 0;
-	if (score > bestScoreInt) setCookie("score", score, { expires: 365 });
+	if (score > bestScoreInt) setCookie("bestScore", score, { expires: 365 });
 }
 
 function drawFood() {
@@ -283,7 +284,7 @@ function makeNextMove() {
 	// checking for food
 	if (snake[0].x == foodX && snake[0].y == foodY) {
 		snake.push(new PartOfSnake(snake[snake.length - 1].previousX, snake[snake.length - 1].previousY));
-		curentScore.value = ++score;
+		currentScore.value = ++score;
 		setFood();
 	}
 }
@@ -319,58 +320,106 @@ function redrawSnake() {
 }
 
 function gameOver(mode) {
+	document.body.style.overflow = ""; // scrolling on
 	clearInterval(timer); // stop timer
 	setBestScoreToCookie();
 	
 	if (mode)
-		curentScore.value = curentScore.value + " - Win";
+		currentScore.value = currentScore.value + " - Win";
 	else
-		curentScore.value = curentScore.value + " - Game Over";
+		currentScore.value = currentScore.value + " - Game Over";
+}
+
+function goUp() {
+	if (!directionChanged)
+		if (direction == RIGHT || direction == LEFT) {
+			direction = UP;
+			directionChanged = true;
+		}
+}
+
+function goLeft() {
+	if (!directionChanged)
+		if (direction == UP || direction == DOWN) {
+			direction = LEFT;
+			directionChanged = true;
+		}
+}
+
+function goRight() {
+	if (startReset) { 
+		start();
+		directionChanged = false;
+	}
+
+	if (!directionChanged)
+		if (direction == UP || direction == DOWN) {
+			direction = RIGHT;
+			directionChanged = true;
+		}
+}
+
+function goDown() {
+	if (startReset) {
+		start();
+		directionChanged = false;
+	}
+        	
+	if (!directionChanged)
+		if (direction == RIGHT || direction == LEFT) {
+			direction = DOWN;
+			directionChanged = true;
+		}
 }
 
 // management of snake by keys with arrows
 document.onkeydown = function(e) {
 	switch (e.keyCode) {
         case 37: // arrow left
-        	if (!directionChanged)
-	        	if (direction == UP || direction == DOWN) {
-	        		direction = LEFT;
-	        		directionChanged = true;
-	        	}
+			goLeft();
             break;
             
         case 38: // arrow up
-        	if (!directionChanged)
-	        	if (direction == RIGHT || direction == LEFT) {
-	        		direction = UP;
-	        		directionChanged = true;
-	        	}
+			goUp();
             break;
             
         case 39: // arrow right
-        	if (startReset) { 
-        		start();
-        		directionChanged = false;
-        	}
-        	
-        	if (!directionChanged)
-	        	if (direction == UP || direction == DOWN) {
-	        		direction = RIGHT;
-	        		directionChanged = true;
-	        	}
+			goRight();
             break;
             
         case 40: // arrow down
-        	if (startReset) {
-        		start();
-        		directionChanged = false;
-        	}
-        	
-        	if (!directionChanged)
-	        	if (direction == RIGHT || direction == LEFT) {
-	        		direction = DOWN;
-	        		directionChanged = true;
-	        	}
+			goDown();
             break;
     }
 };
+
+// management of snake by swipes (touch screen)
+window.addEventListener("load", function() {
+	document.body.addEventListener("touchstart", rememberTouch, false);
+	document.body.addEventListener("touchmove", trackMovement, false);}, false);
+
+var touchPositionX;
+var touchPositionY;
+function rememberTouch(event) {
+    touchPositionX = event.touches[0].pageX;
+    touchPositionY = event.touches[0].pageY;
+}
+
+function trackMovement(event) {
+    var moveX = touchPositionX - event.touches[0].pageX;
+    var moveY = touchPositionY - event.touches[0].pageY;
+    
+    if (Math.abs(moveX) > 50) {
+    	if (moveX < 0)
+        	goRight();
+    	else
+        	goLeft();
+    }
+    
+	if (Math.abs(moveY) > 50) {
+		if (moveY < 0)
+        	goDown();
+    	else
+        	goUp();
+    }
+}
